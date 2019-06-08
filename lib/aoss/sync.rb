@@ -23,7 +23,7 @@ module Aoss
 
       # filter bad repos out
       # these all have underscores in their version names, which I don't know how to handle.
-      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile"]
+      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder"]
       @repos = @repos.filter{|r| !bad.include? r.name}
 
       pool = Thread.pool(opts.cpus)

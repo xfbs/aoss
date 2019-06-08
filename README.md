@@ -1,28 +1,20 @@
-# Aoss
+# Apple Open Source Sync
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/aoss`. To experiment with that code, run `bin/console` for an interactive prompt.
+Syncs all projects from [Apple Open Source](https://opensource.apple.com/) to a folder, and converts them into git repositories with the individual versions as tags and commits with the correct time.
 
-TODO: Delete this and the text above, and describe your gem
+It currently mostly works but is broken for a few projects due to inconsistencies with naming.
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
-```ruby
-gem 'aoss'
-```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
+Install it yourself as:
 
     $ gem install aoss
 
 ## Usage
 
-TODO: Write usage instructions here
+Run the `aoss` tool with the name of a directory to save the git repositories to. Be aware that running the tool will take quite a lot of time.
+
+    $ aoss path/to/repos/
 
 ## Development
 
