@@ -1,9 +1,18 @@
 require 'date'
+require 'tempfile'
 
 module Aoss
   class TarFile
     def initialize file
       @file = file
+
+      unless file.respond_to? :path
+        tmp = Tempfile.new('aoss')
+        tmp.binmode
+        tmp.write file.read
+        tmp.flush
+        @file = tmp
+      end
     end
 
     def extract(strip_components: 0, destdir:)

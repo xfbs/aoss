@@ -104,7 +104,12 @@ module Aoss
 
             # create commit and add tag
             @git.add(:all=>true)
-            @git.commit "Revision #{version}.", :date => date.to_s
+            begin
+              @git.commit "Revision #{version}.", :date => date.to_s
+            rescue Git::GitExecuteError => e
+              @log.error "[#{@name}] exception while doing a git commit"
+              @log.error e
+            end
             @git.add_tag "r#{version}"
             @log.info "[#{@name}] added version #{version} to the repository"
           end
