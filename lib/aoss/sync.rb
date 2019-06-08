@@ -23,8 +23,10 @@ module Aoss
 
       # filter bad repos out
       # these all have underscores in their version names, which I don't know how to handle.
-      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder"]
-      @repos = @repos.filter{|r| !bad.include? r.name}
+      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder", "seeds"]
+      # these have some odd file permission issues
+      bad += ["gdb", "gdbforcw"]
+      @repos = @repos.filter{|r| !bad.include? r.name}[301..311]
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
@@ -47,7 +49,7 @@ module Aoss
           begin
             repo.sync
           rescue => e
-            opts.log.error "Error while processing #{repo.inspect}: \n#{e}"
+            opts.log.error "[#{repo.name}] error while syncing:\n#{e.full_message}"
             #opts.log.error e
             exit
           end

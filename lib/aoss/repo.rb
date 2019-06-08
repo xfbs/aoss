@@ -3,6 +3,7 @@ require 'aoss/dir_list'
 require 'git'
 require 'fileutils'
 require 'aoss/tar_file'
+require 'tempfile'
 
 module Aoss
   class Repo
@@ -73,16 +74,35 @@ module Aoss
         end
       end
 
+      prev_date = DateTime.new(1980)
       sorted_versions.each do |version|
+        # only do this if a tag with this version doesn't exist yet
         if tags[version].nil?
           @log.info "[#{@name}] creating version #{version} by downloading #{@entries[version]}"
           open(File.join(@url, @entries[version])) do |file|
+            # make sure we're backed by a file.
+            if file === StringIO
+              f = Tempfile.new('aoss')
+              f.binmode
+              f << file.read
+              file = f
+            end
+
             @log.info "[#{@name}] have file for version #{version}, extracting"
             FileUtils.rm_r Dir["#{@path}/*"]
             tar = TarFile.new(file)
             tar.extract(strip_components: 1, destdir: @path)
+
+            # extract and sanity check date
             date = tar.date(file: @entries[version].chomp(".tar.gz"))
-            @log.info "using datetime #{date} parsed from tar archive"
+            if date <= prev_date
+              @log.error "[#{@name}] current version #{version} lies in the past"
+            elsif date.year < 1995 || date.year > 2020
+              @log.error "[#{@name}] illegal date encountered in #{version}: #{date}"
+            end
+            prev_date = date
+
+            # create commit and add tag
             @git.add(:all=>true)
             @git.commit "Revision #{version}.", :date => date.to_s
             @git.add_tag "r#{version}"
