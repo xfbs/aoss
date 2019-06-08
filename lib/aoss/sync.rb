@@ -21,9 +21,6 @@ module Aoss
         end
       end
 
-      # FIXME limit repos for debug reasons
-      #@repos = @repos[0..2]
-
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
         pool.process do
@@ -42,10 +39,15 @@ module Aoss
       # sync repos
       @repos.each do |repo|
         pool.process do
-          repo.sync
+          begin
+            repo.sync
+          rescue => e
+            opts.log.error e
+            exit
+          end
         end
       end
-      pool.shutdown
+      pool.wait
     end
   end
 end

@@ -12,6 +12,7 @@ module Aoss
   def self.run(args)
     opts = OpenStruct.new
     opts.log = Logger.new(STDOUT)
+    opts.log.sev_threshold = Logger::WARN
     opts.dir = args[0]
     opts.cpus = 4
     Sync.new.run(opts)
