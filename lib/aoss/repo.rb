@@ -24,13 +24,13 @@ module Aoss
     def setup
       # create folder if it doesn't exist
       unless Dir.exists? @path
-        @log.info "creating directory for repo #{@name}"
+        @log.info "[#{@name}] creating directory for repo"
         FileUtils.mkdir(@path)
       end
 
       # create repo if there isn't one
       unless Dir.exists? File.join(@path, ".git")
-        @log.info "creating repository for repo #{@name}"
+        @log.info "[#{@name}] creating repository for repo"
         Git.init(@path, :log => @log)
       end
 
@@ -39,11 +39,11 @@ module Aoss
 
     # get entries from apple
     def fetch_entries
-      @log.info "fetching entries for #{@name}"
+      @log.info "[#{@name}] fetching entries for"
       DirList.new(open(@url)).entries.each do |entry|
         @entries[Gem::Version.new(parse_entry(entry))] = entry
       end
-      @log.info "got #{@entries.length} entries for #{@name}"
+      @log.info "[#{@name}] got #{@entries.length} entries"
     end
 
     # get tags from remotes
@@ -67,7 +67,18 @@ module Aoss
       end
 
       sorted_versions.each do |version|
-        @log.info "#{version} has tag: #{tags[version].nil?}"
+        if tags[version].nil?
+          @log.info "[#{@name}] creating version #{version} by downloading #{@entries[version]}"
+          open(File.join(@url, @entries[version])) do |file|
+            @log.info "[#{@name}] have file for version #{version}, extracting"
+            FileUtils.rm_r Dir["#{@path}/*"]
+            `tar --strip-components 1 -xf "#{file.path}" -C "#{@path}"`
+            @git.add(:all=>true)
+            @git.commit "Revision #{version}."
+            @git.add_tag "r#{version}"
+            @log.info "[#{@name}] added version #{version} to the repository"
+          end
+        end
       end
     end
   end
