@@ -26,15 +26,18 @@ module Aoss
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        pool.process do
+        #pool.process do
           repo.setup
           repo.fetch_tags
-        end
-        pool.process do
+        #end
+        #pool.process do
           repo.fetch_entries
-        end
+        #end
       end
-      pool.shutdown
+      pool.wait
+      @repos.each do |repo|
+        repo.sync
+      end
     end
   end
 end
