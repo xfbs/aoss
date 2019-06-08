@@ -21,31 +21,37 @@ module Aoss
         end
       end
 
+      # filter bad repos out
+      # these all have underscores in their version names, which I don't know how to handle.
+      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile"]
+      @repos = @repos.filter{|r| !bad.include? r.name}
+
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        pool.process do
+        #pool.process do
           # create git repo and fetch tags from remote
           repo.setup
-          repo.fetch_tags
-        end
-        pool.process do
+          #repo.fetch_tags
+        #end
+        #pool.process do
           # fetch entries from apple opensource
           repo.fetch_entries
-        end
+        #end
       end
       # wait for all of that to be done
       pool.wait
 
       # sync repos
       @repos.each do |repo|
-        pool.process do
+        #pool.process do
           begin
             repo.sync
           rescue => e
-            opts.log.error e
+            opts.log.error "Error while processing #{repo.inspect}: \n#{e}"
+            #opts.log.error e
             exit
           end
-        end
+        #end
       end
       pool.wait
     end

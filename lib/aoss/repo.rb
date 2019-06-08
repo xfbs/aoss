@@ -6,6 +6,8 @@ require 'aoss/tar_file'
 
 module Aoss
   class Repo
+    attr_accessor :name
+
     def initialize logger:, name:, url:, basedir:
       @log = logger
       @name = name
@@ -55,14 +57,18 @@ module Aoss
     end
 
     def parse_entry entry
-      /^#{@name}-([\d\.]+)\.tar\.gz$/.match(entry)[1]
+      unless /^#{@name}-[\da-z\.]+\.tar\.gz/ =~ entry
+        @log.warn "[#{@name}] entry might be malformed: #{entry}"
+      end
+
+      /^#{@name}-([\da-zA-Z\.]+)\.tar\.gz$/.match(entry)[1]
     end
 
     def sync
       sorted_versions = @entries.keys.sort
       tags = {}
       @git.tags.each do |tag|
-        if /^r[\d\.]+$/ =~ tag.name
+        if /^r[\da-z\.]+$/ =~ tag.name
           tags[Gem::Version.new(tag.name[1..-1])] = tag
         end
       end
