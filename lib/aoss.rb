@@ -6,4 +6,8 @@ module Aoss
 
   class Error < StandardError; end
   # Your code goes here...
+
+  def self.run
+    Sync.new.run
+  end
 end

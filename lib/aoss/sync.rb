@@ -1,6 +1,6 @@
 require 'nokogiri'
 require 'open-uri'
-
+require 'aoss/dir_list'
 
 module Aoss
   class Sync
@@ -11,9 +11,9 @@ module Aoss
 
     def run
       open(APPLE_OPENSOURCE) do |response|
-        body = response.read
+        body = DirList.new(response.read)
 
-        p body
+        p body.entries
       end
     end
   end
