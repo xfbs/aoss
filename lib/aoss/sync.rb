@@ -22,22 +22,30 @@ module Aoss
       end
 
       # FIXME limit repos for debug reasons
-      @repos = @repos[0..2]
+      #@repos = @repos[0..2]
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        #pool.process do
+        pool.process do
+          # create git repo and fetch tags from remote
           repo.setup
           repo.fetch_tags
-        #end
-        #pool.process do
+        end
+        pool.process do
+          # fetch entries from apple opensource
           repo.fetch_entries
-        #end
+        end
       end
+      # wait for all of that to be done
       pool.wait
+
+      # sync repos
       @repos.each do |repo|
-        repo.sync
+        pool.process do
+          repo.sync
+        end
       end
+      pool.shutdown
     end
   end
 end

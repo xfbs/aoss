@@ -2,6 +2,7 @@ require 'open-uri'
 require 'aoss/dir_list'
 require 'git'
 require 'fileutils'
+require 'aoss/tar_file'
 
 module Aoss
   class Repo
@@ -72,9 +73,12 @@ module Aoss
           open(File.join(@url, @entries[version])) do |file|
             @log.info "[#{@name}] have file for version #{version}, extracting"
             FileUtils.rm_r Dir["#{@path}/*"]
-            `tar --strip-components 1 -xf "#{file.path}" -C "#{@path}"`
+            tar = TarFile.new(file)
+            tar.extract(strip_components: 1, destdir: @path)
+            date = tar.date(file: @entries[version].chomp(".tar.gz"))
+            @log.info "using datetime #{date} parsed from tar archive"
             @git.add(:all=>true)
-            @git.commit "Revision #{version}."
+            @git.commit "Revision #{version}.", :date => date.to_s
             @git.add_tag "r#{version}"
             @log.info "[#{@name}] added version #{version} to the repository"
           end
