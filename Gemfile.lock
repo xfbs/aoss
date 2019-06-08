@@ -2,12 +2,15 @@ PATH
   remote: .
   specs:
     aoss (0.1.0)
+      git
       nokogiri
+      thread
 
 GEM
   remote: https://rubygems.org/
   specs:
     diff-lcs (1.3)
+    git (1.5.0)
     mini_portile2 (2.4.0)
     nokogiri (1.10.3)
       mini_portile2 (~> 2.4.0)
@@ -25,6 +28,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
+    thread (0.2.2)
 
 PLATFORMS
   ruby

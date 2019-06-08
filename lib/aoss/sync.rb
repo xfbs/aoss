@@ -1,20 +1,43 @@
 require 'nokogiri'
 require 'open-uri'
 require 'aoss/dir_list'
+require 'aoss/repo'
+require 'thread/pool'
 
 module Aoss
   class Sync
-    @repos = []
-
     def initialize
+      @repos = []
     end
 
-    def run
+    def run(opts)
+      opts.log.info "fetching list of open source projects"
       open(APPLE_OPENSOURCE) do |response|
+        opts.log.info "got response, reading and parsing"
         body = DirList.new(response.read)
+        opts.log.info "found #{body.entries.length} open source projects"
 
-        p body.entries
+        body.entries.each do |entry|
+          opts.log.info "creating repo for #{entry}"
+          p opts.dir
+          @repos << Repo.new(logger: opts.log, name: entry[0..-1], url: APPLE_OPENSOURCE + entry, basedir: opts.dir)
+        end
       end
+
+      # FIXME limit repos for debug reasons
+      @repos = @repos[0..2]
+
+      pool = Thread.pool(opts.cpus)
+      @repos.each do |repo|
+        pool.process do
+          repo.setup
+          repo.fetch_tags
+        end
+        pool.process do
+          repo.fetch_entries
+        end
+      end
+      pool.shutdown
     end
   end
 end
