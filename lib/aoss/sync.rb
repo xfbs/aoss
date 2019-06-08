@@ -13,13 +13,10 @@ module Aoss
     def run(opts)
       opts.log.info "fetching list of open source projects"
       open(APPLE_OPENSOURCE) do |response|
-        opts.log.info "got response, reading and parsing"
         body = DirList.new(response.read)
         opts.log.info "found #{body.entries.length} open source projects"
 
         body.entries.each do |entry|
-          opts.log.info "creating repo for #{entry}"
-          p opts.dir
           @repos << Repo.new(logger: opts.log, name: entry[0..-1], url: APPLE_OPENSOURCE + entry, basedir: opts.dir)
         end
       end

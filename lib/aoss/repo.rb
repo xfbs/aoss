@@ -12,6 +12,10 @@ module Aoss
       @entries = []
       @basedir = basedir
       @path = File.join(@basedir, @name)
+
+      unless name =~ /^[a-zA-Z0-9_]+\/$/
+        throw "bad formatting at #{name}"
+      end
     end
 
     def setup
@@ -24,7 +28,7 @@ module Aoss
       # create repo if there isn't one
       unless Dir.exists? File.join(@path, ".git")
         @log.info "creating repository for repo #{@name}"
-        Git.init(@path, :log => @log)
+        @git = Git.init(@path, :log => @log)
       end
 
       @repo = Git.open(File.join(@basedir, @name), :log => @log)
@@ -38,6 +42,7 @@ module Aoss
     end
 
     def fetch_tags
+      @git.fetch
     end
   end
 end

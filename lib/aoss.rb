@@ -4,7 +4,7 @@ require 'logger'
 require 'ostruct'
 
 module Aoss
-  APPLE_OPENSOURCE = "https://opensource.apple.com/source/"
+  APPLE_OPENSOURCE = "https://opensource.apple.com/tarballs/"
 
   class Error < StandardError; end
   # Your code goes here...
