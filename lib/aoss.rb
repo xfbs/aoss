@@ -10,11 +10,26 @@ module Aoss
   # Your code goes here...
 
   def self.run(args)
-    opts = OpenStruct.new
-    opts.log = Logger.new(STDOUT)
-    opts.log.sev_threshold = Logger::DEBUG
-    opts.dir = args[0]
-    opts.cpus = 4
-    Sync.new.run(opts)
+    if args.length < 2
+      puts help
+    else
+      opts = OpenStruct.new
+      opts.log = Logger.new(STDOUT)
+      opts.log.sev_threshold = Logger::DEBUG
+      opts.dir = args[0]
+      opts.cpus = 4
+      case args.first
+      when 'sync'
+        Sync.new.run(opts)
+      when 'push'
+        Push.new.run(opts)
+      else
+        puts help
+      end
+    end
+  end
+
+  def self.help
+    "Usage: aoss [push | sync] <dir>"
   end
 end

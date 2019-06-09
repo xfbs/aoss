@@ -25,20 +25,20 @@ module Aoss
       # these all have underscores in their version names, which I don't know how to handle.
       bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder", "seeds"]
       # these have some odd file permission issues
-      bad += ["gdb", "gdbforcw"]
+      bad += ["gdb", "gdbforcw", "cctools"]
       @repos = @repos.filter{|r| !bad.include? r.name}[200..311]
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        #pool.process do
+        pool.process do
           # create git repo and fetch tags from remote
           repo.setup
           #repo.fetch_tags
-        #end
-        #pool.process do
+        end
+        pool.process do
           # fetch entries from apple opensource
           repo.fetch_entries
-        #end
+        end
       end
       # wait for all of that to be done
       pool.wait
@@ -51,11 +51,13 @@ module Aoss
           rescue => e
             opts.log.error "[#{repo.name}] error while syncing"
             opts.log.error e
-            exit
+            bad << repo.name
           end
         #end
       end
       pool.wait
+
+      opts.log.error "RESULT: syncing complete, but didn't work for #{bad.join(', ')}. these need to be handled manually."
     end
   end
 end
