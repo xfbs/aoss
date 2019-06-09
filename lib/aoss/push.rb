@@ -32,6 +32,7 @@ module Aoss
           rescue => e
             @log.error "[#{repo.name}] error while pushing."
             @log.error e
+            bad << repo.name
           end
         end
       end

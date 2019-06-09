@@ -58,7 +58,7 @@ module Aoss
 
       if @git.is_branch? 'master'
         @log.info "[#@name] pushing to github."
-        @git.push("origin")
+        @git.push("origin", "master", :force => true)
       else
         @log.error "[#@name] branch master doesn't exist, skipping."
       end
@@ -92,7 +92,7 @@ module Aoss
       sorted_versions = @entries.keys.sort
       tags = {}
       @git.tags.each do |tag|
-        if /^r[\da-z\.]+$/ =~ tag.name
+        if /^v[\da-z\.]+$/ =~ tag.name
           tags[Gem::Version.new(tag.name[1..-1])] = tag
         end
       end
@@ -128,12 +128,12 @@ module Aoss
             # create commit and add tag
             @git.add(:all=>true)
             begin
-              @git.commit "Revision #{version}.", :date => date.to_s
+              @git.commit "Updates to vevision #{version}.", :date => date.to_s, :author => "John Appleseed <john@apple.com>"
             rescue Git::GitExecuteError => e
               @log.error "[#{@name}] exception while doing a git commit"
               @log.error e
             end
-            @git.add_tag "r#{version}"
+            @git.add_tag "v#{version}"
             @log.info "[#{@name}] added version #{version} to the repository"
           end
         end

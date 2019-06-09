@@ -16,11 +16,11 @@ module Aoss
     else
       opts = OpenStruct.new
       opts.log = Logger.new(STDOUT)
-      opts.log.sev_threshold = Logger::INFO
+      opts.log.sev_threshold = Logger::DEBUG
       opts.dir = args[1]
       opts.token = args[2]
       opts.org = args[3]
-      opts.cpus = 4
+      opts.cpus = 8
       case args.first
       when 'sync'
         Sync.new.run(opts)
