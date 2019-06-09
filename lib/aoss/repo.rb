@@ -126,9 +126,9 @@ module Aoss
             prev_date = date
 
             # create commit and add tag
-            @git.add(:all=>true)
+            @git.add()
             begin
-              @git.commit "Updates to vevision #{version}.", :date => date.to_s, :author => "John Appleseed <john@apple.com>"
+              @git.commit "Updates to version #{version}.", :date => date.to_s, :author => "John Appleseed <john@apple.com>"
             rescue Git::GitExecuteError => e
               @log.error "[#{@name}] exception while doing a git commit"
               @log.error e

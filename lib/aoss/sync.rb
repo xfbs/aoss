@@ -27,26 +27,26 @@ module Aoss
       # these have some odd file permission issues
       bad += ["gdb", "gdbforcw", "cctools"]
 
-      #@repos = @repos.filter{|r| !bad.include? r.name}[200..311]
+      @repos = @repos.filter{|r| !bad.include? r.name}[0..20]
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        pool.process do
+        #pool.process do
           # create git repo and fetch tags from remote
           repo.setup
           #repo.fetch_tags
-        end
-        pool.process do
+        #end
+        #pool.process do
           # fetch entries from apple opensource
           repo.fetch_entries
-        end
+        #end
       end
       # wait for all of that to be done
       pool.wait
 
       # sync repos
       @repos.each do |repo|
-        pool.process do
+        #pool.process do
           begin
             repo.sync
           rescue => e
@@ -54,7 +54,7 @@ module Aoss
             opts.log.error e
             bad << repo.name
           end
-        end
+        #end
       end
       pool.wait
 

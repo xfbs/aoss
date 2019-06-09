@@ -26,7 +26,7 @@ module Aoss
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        pool.process do
+        #pool.process do
           begin
             repo.push(client: client, org: opts.org)
           rescue => e
@@ -34,7 +34,7 @@ module Aoss
             @log.error e
             bad << repo.name
           end
-        end
+        #end
       end
       pool.wait
 
