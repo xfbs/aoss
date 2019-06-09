@@ -1,5 +1,6 @@
 require "aoss/version"
 require "aoss/sync"
+require 'aoss/push'
 require 'logger'
 require 'ostruct'
 
@@ -16,7 +17,9 @@ module Aoss
       opts = OpenStruct.new
       opts.log = Logger.new(STDOUT)
       opts.log.sev_threshold = Logger::DEBUG
-      opts.dir = args[0]
+      opts.dir = args[1]
+      opts.token = args[2]
+      opts.org = args[3]
       opts.cpus = 4
       case args.first
       when 'sync'

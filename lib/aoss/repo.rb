@@ -9,7 +9,7 @@ module Aoss
   class Repo
     attr_accessor :name
 
-    def initialize logger:, name:, url:, basedir:
+    def initialize logger:, name:, url: nil, basedir:
       @log = logger
       @name = name
       @url = url
@@ -39,6 +39,14 @@ module Aoss
       end
 
       @git = Git.open(File.join(@basedir, @name), :log => @log)
+    end
+
+    def push(client)
+      @git = Git.open(File.join(@basedir, @name), :log => @log)
+
+      unless @git.remotes.any?{|r| r.url =~ /github\.com/}
+        @log.info "no remote found, creating repo at github"
+      end
     end
 
     # get entries from apple

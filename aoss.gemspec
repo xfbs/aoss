@@ -42,4 +42,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency "nokogiri"
   spec.add_dependency "thread"
   spec.add_dependency "git"
+  spec.add_dependency "octokit"
 end
