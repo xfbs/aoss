@@ -22,13 +22,24 @@ module Aoss
       client = Octokit::Client.new(:access_token => opts.token)
       opts.log.info "logged in to github API as #{client.user.name}"
 
+      bad = []
+
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        #pool.process do
-          repo.push(client: client, org: opts.org)
-        #end
+        pool.process do
+          begin
+            repo.push(client: client, org: opts.org)
+          rescue => e
+            @log.error "[#{repo.name}] error while pushing."
+            @log.error e
+          end
+        end
       end
       pool.wait
+
+      unless bad.empty?
+        @log.error "errors while pushing #{bad.join(', ')}."
+      end
     end
   end
 end
