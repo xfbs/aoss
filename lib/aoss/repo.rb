@@ -41,11 +41,26 @@ module Aoss
       @git = Git.open(File.join(@basedir, @name), :log => @log)
     end
 
-    def push(client)
+    def push(client:, org:)
       @git = Git.open(File.join(@basedir, @name), :log => @log)
 
       unless @git.remotes.any?{|r| r.url =~ /github\.com/}
-        @log.info "no remote found, creating repo at github"
+        @log.info "[#@name] doesn't have a remote, checking github."
+        begin
+          repo = client.repository("#{org}/#{@name}")
+        rescue Octokit::NotFound
+          @log.info "[#@name] repository #{org}/#{@name} not found, creating it."
+          repo = client.create_repository(@name, :organization => org)
+        end
+
+        @git.add_remote("origin", "git@github.com:#{org}/#@name")
+      end
+
+      if @git.is_branch? 'master'
+        @log.info "[#@name] pushing to github."
+        @git.push("origin")
+      else
+        @log.error "[#@name] branch master doesn't exist, skipping."
       end
     end
 

@@ -16,7 +16,7 @@ module Aoss
     else
       opts = OpenStruct.new
       opts.log = Logger.new(STDOUT)
-      opts.log.sev_threshold = Logger::DEBUG
+      opts.log.sev_threshold = Logger::INFO
       opts.dir = args[1]
       opts.token = args[2]
       opts.org = args[3]

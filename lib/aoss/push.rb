@@ -24,9 +24,9 @@ module Aoss
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        pool.process do
-          repo.push(client)
-        end
+        #pool.process do
+          repo.push(client: client, org: opts.org)
+        #end
       end
       pool.wait
     end

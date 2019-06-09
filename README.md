@@ -14,7 +14,11 @@ Install it yourself as:
 
 Run the `aoss` tool with the name of a directory to save the git repositories to. Be aware that running the tool will take quite a lot of time.
 
-    $ aoss path/to/repos/
+    $ aoss sync path/to/repos/
+
+If you would like to push all these repositories to github, there's also an option to do so. You need to generate a personal access token with `admin:org` rights. You also need a namespace to push the repositories under, which can be an organisation. Then you run the tool like this:
+
+    $ aoss push path/to/repos/ <token> [<org>]
 
 ## Development
 

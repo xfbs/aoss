@@ -26,7 +26,8 @@ module Aoss
       bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder", "seeds"]
       # these have some odd file permission issues
       bad += ["gdb", "gdbforcw", "cctools"]
-      @repos = @repos.filter{|r| !bad.include? r.name}[200..311]
+
+      #@repos = @repos.filter{|r| !bad.include? r.name}[200..311]
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
@@ -45,7 +46,7 @@ module Aoss
 
       # sync repos
       @repos.each do |repo|
-        #pool.process do
+        pool.process do
           begin
             repo.sync
           rescue => e
@@ -53,7 +54,7 @@ module Aoss
             opts.log.error e
             bad << repo.name
           end
-        #end
+        end
       end
       pool.wait
 
