@@ -23,11 +23,12 @@ module Aoss
 
       # filter bad repos out
       # these all have underscores in their version names, which I don't know how to handle.
-      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder", "seeds"]
+      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder", "seeds", "CF", "BerkeleyDB", "IOKitUser", "Libc", "Libsystem", "Liby", "OpenAL", "PowerManagement", "X11apps", "X11fonts", "X11libs", "X11misc", "X11proto", "X11server", "WTF", "apr", "apache_mod_ssl"]
       # these have some odd file permission issues
       bad += ["gdb", "gdbforcw", "cctools"]
 
-      @repos = @repos.filter{|r| !bad.include? r.name}[0..20]
+      @repos = @repos.filter{|r| !bad.include? r.name}[180...220]
+      #@repos = @repos.filter{|r| r.name == "AppleMacRISC2PE"}
 
       pool = Thread.pool(opts.cpus)
       @repos.each do |repo|

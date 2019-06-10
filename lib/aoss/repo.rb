@@ -58,7 +58,7 @@ module Aoss
 
       if @git.is_branch? 'master'
         @log.info "[#@name] pushing to github."
-        @git.push("origin", "master", :force => true)
+        @git.push("origin", "master", :force => true, :tags => true)
       else
         @log.error "[#@name] branch master doesn't exist, skipping."
       end
@@ -119,7 +119,7 @@ module Aoss
             # extract and sanity check date
             date = tar.date(file: @entries[version].chomp(".tar.gz"))
             if date <= prev_date
-              @log.error "[#{@name}] current version #{version} lies in the past"
+              @log.warn "[#{@name}] current version #{version} lies in the past"
             elsif date.year < 1995 || date.year > 2020
               @log.error "[#{@name}] illegal date encountered in #{version}: #{date}"
             end
