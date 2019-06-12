@@ -131,7 +131,7 @@ module Aoss
               @git.commit "Updates to version #{version}.", :date => date.to_s, :author => "John Appleseed <john@apple.com>"
             rescue Git::GitExecuteError => e
               @log.error "[#{@name}] exception while doing a git commit"
-              @log.error e
+              raise e
             end
             @git.add_tag "v#{version}"
             @log.info "[#{@name}] added version #{version} to the repository"

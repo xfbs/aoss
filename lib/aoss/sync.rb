@@ -23,41 +23,27 @@ module Aoss
 
       # filter bad repos out
       # these all have underscores in their version names, which I don't know how to handle.
-      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder", "seeds", "CF", "BerkeleyDB", "IOKitUser", "Libc", "Libsystem", "Liby", "OpenAL", "PowerManagement", "X11apps", "X11fonts", "X11libs", "X11misc", "X11proto", "X11server", "WTF", "apr", "apache_mod_ssl"]
+      bad = ["AppleCore99PE", "AppleMacRISC2PE", "CarbonHeaders", "IOSCSIArchitectureModelFamily", "IOUSBMassStorageClass", "JavaScriptCore", "WebCore", "apache_mod_xsendfile", "blast", "mDNSResponder", "seeds", "CF", "BerkeleyDB", "IOKitUser", "Libc", "Libsystem", "Liby", "OpenAL", "PowerManagement", "X11apps", "X11fonts", "X11libs", "X11misc", "X11proto", "X11server", "WTF", "apr", "apache_mod_ssl", "bootstrap_cmds", "diskdev_cmds", "doc_cmds", "dyld", "curl", "bmalloc", "configd", "file_cmds", "files", "gas", "gcc3", "gcc_os", "gcc_os_35", "gccfast", "gimp_print", "gpatch", "groff", "gssd", "headerdoc", "libdispatch", "libiconv", "libplatform", "libstdcxx", "lukemftp", "lukemftpd", "msdosfs", "ntfs", "rsync", "security_certificates", "security_ocspd", "top", "vim", "zip", "AppleI2C", "AppleMediaBay", "AppleThermal", "IOATAFamily", "OpenPAM", "awk", "bash", "expat", "ld64", "less", "libauto"]
       # these have some odd file permission issues
       bad += ["gdb", "gdbforcw", "cctools"]
 
-      @repos = @repos.filter{|r| !bad.include? r.name}[180...220]
-      #@repos = @repos.filter{|r| r.name == "AppleMacRISC2PE"}
+      @repos = @repos.filter{|r| !bad.include? r.name}
 
-      pool = Thread.pool(opts.cpus)
       @repos.each do |repo|
-        #pool.process do
-          # create git repo and fetch tags from remote
-          repo.setup
-          #repo.fetch_tags
-        #end
-        #pool.process do
-          # fetch entries from apple opensource
-          repo.fetch_entries
-        #end
+        repo.setup
+        repo.fetch_entries
       end
-      # wait for all of that to be done
-      pool.wait
 
       # sync repos
       @repos.each do |repo|
-        #pool.process do
-          begin
-            repo.sync
-          rescue => e
-            opts.log.error "[#{repo.name}] error while syncing"
-            opts.log.error e
-            bad << repo.name
-          end
-        #end
+        begin
+          repo.sync
+        rescue => e
+          opts.log.error "[#{repo.name}] error while syncing"
+          opts.log.error e
+          bad << repo.name
+        end
       end
-      pool.wait
 
       opts.log.error "RESULT: syncing complete, but didn't work for #{bad.join(', ')}. these need to be handled manually."
     end
