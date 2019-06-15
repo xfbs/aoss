@@ -27,12 +27,20 @@ module Aoss
       # these have some odd file permission issues
       bad += ["gdb", "gdbforcw", "cctools"]
 
-      @repos = @repos.filter{|r| !bad.include? r.name}
+      @repos = @repos.filter{|r| !bad.include? r.name}[0...1]
 
       @repos.each do |repo|
-        repo.setup
-        repo.fetch_entries
+        begin
+          repo.setup
+          repo.fetch_entries
+        rescue => e
+          opts.log.error "[#{repo.name}] error while setup"
+          opts.log.error e
+          exit
+        end
       end
+
+      bad = []
 
       # sync repos
       @repos.each do |repo|

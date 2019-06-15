@@ -20,7 +20,9 @@ module Aoss
     end
 
     def date(file: nil)
-      d = Date.parse(`tar -qtvf #{@file.path} #{file}`.split(" ")[5..7].join(" "))
+      date = `tar -tvf #{@file.path} #{file}`.split("\n").first.split(" ")[3..4].join(" ")
+      puts "parsing date #{date}"
+      d = Date.parse(date)
       DateTime.new(d.year, d.month, d.day, 9, 41, 0, 0)
     end
   end

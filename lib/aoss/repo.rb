@@ -35,14 +35,17 @@ module Aoss
       # create repo if there isn't one
       unless Dir.exists? File.join(@path, ".git")
         @log.info "[#{@name}] creating repository for repo"
-        Git.init(@path, :log => @log)
+
+        # somehow Git.init doesn't work if the path is in a git repo.
+        #Git.init(@path, :log => @log)
+        `git init "#@path"`
       end
 
-      @git = Git.open(File.join(@basedir, @name), :log => @log)
+      @git = Git.open(@path, :log => @log)
     end
 
     def push(client:, org:)
-      @git = Git.open(File.join(@basedir, @name), :log => @log)
+      @git = Git.open(@path, :log => @log)
 
       unless @git.remotes.any?{|r| r.url =~ /github\.com/}
         @log.info "[#@name] doesn't have a remote, checking github."
