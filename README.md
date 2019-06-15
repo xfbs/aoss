@@ -4,6 +4,8 @@ Syncs all projects from [Apple Open Source](https://opensource.apple.com/) to a 
 
 It currently mostly works but is broken for a few projects due to inconsistencies with naming.
 
+Note that this script is super hacky, it needs working on the code to work. It also depends on things like what version of `tar` you have installed to extract things.
+
 ## Installation
 
 Install it yourself as:
