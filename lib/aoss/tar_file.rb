@@ -1,5 +1,6 @@
 require 'date'
 require 'tempfile'
+require 'fileutils'
 
 module Aoss
   class TarFile
@@ -17,6 +18,9 @@ module Aoss
 
     def extract(strip_components: 0, destdir:)
       `tar --strip-components #{strip_components} -xf "#{@file.path}" -C "#{destdir}"`
+
+      # fix permissions
+      FileUtils.chmod_R("u+w", destdir)
     end
 
     def date(file: nil)

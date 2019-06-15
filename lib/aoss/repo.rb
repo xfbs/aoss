@@ -7,7 +7,7 @@ require 'tempfile'
 
 module Aoss
   class Repo
-    attr_accessor :name
+    attr_accessor :name, :path
 
     def initialize logger:, name:, url: nil, basedir:
       @log = logger
